@@ -12,4 +12,4 @@ The Token Vault is responsible for generating secure, non-reversible (or heavily
 ## 🚀 Responsibilities (Member 3)
 * Generate cryptographically secure tokens.
 * Ensure consistent token formatting.
-* Interface with the Redis mapping layer to store the relationship between the token and the original data.
+* Interface with the Redis mapping layer to store the relationship between the token and the original data. 
