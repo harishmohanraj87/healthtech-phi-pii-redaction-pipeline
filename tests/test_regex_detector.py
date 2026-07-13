@@ -1,6 +1,6 @@
 """
 test_regex_detector.py
-Member 2 - Detection Engine Lead
+Yash Kulkarni - Detection Engine Lead
 Week 1 / Day 3: Tests for ADDRESS, AGE + edge case hardening.
 
 Run with: pytest tests/test_regex_detector.py -v
