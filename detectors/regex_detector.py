@@ -1,12 +1,16 @@
 """
 regex_detector.py
 Member 2 - Detection Engine Lead
-Week 1 / Day 2: Expanded regex detection.
+Week 1 / Day 3: Edge-case hardening + 2 more entity types.
 
-Day 1 entities: PHONE, EMAIL, DATE, MRN
-Day 2 adds:     SSN, ZIP, IP_ADDRESS
-Day 2 also adds: overlap resolution (so DATE and MRN don't both grab
-the same digits) and more false-positive guards.
+Entities so far:
+  Day 1: PHONE, EMAIL, DATE, MRN
+  Day 2: SSN, ZIP, IP_ADDRESS
+  Day 3: ADDRESS, AGE
+
+Day 3 also fixes an edge case where DATE patterns could false-positive on
+plain age mentions like "65 years old" or vitals like "120/80", and adds
+a simple street-address pattern (common in clinical intake notes).
 """
 
 import re
@@ -24,10 +28,6 @@ class Detection:
     def __repr__(self):
         return f"Detection(type={self.entity_type}, text='{self.text}', span=({self.start},{self.end}))"
 
-
-# ---------------------------------------------------------------------------
-# Regex Patterns
-# ---------------------------------------------------------------------------
 
 PATTERNS = {
     "PHONE": re.compile(
@@ -51,33 +51,39 @@ PATTERNS = {
         re.IGNORECASE
     ),
 
-    # NEW Day 2 --------------------------------------------------------
-
-    # SSN: 123-45-6789 (strict format, avoids matching plain phone-like numbers)
     "SSN": re.compile(
         r"\b\d{3}-\d{2}-\d{4}\b"
     ),
 
-    # US ZIP code: 12345 or 12345-6789 — only matched near "zip"/"zip code"
-    # context word to avoid catching random 5-digit numbers (like room numbers).
     "ZIP": re.compile(
         r"\b(?:zip\s*code|zip)\s*[:#-]?\s*(\d{5}(?:-\d{4})?)\b",
         re.IGNORECASE
     ),
 
-    # IPv4 address
     "IP_ADDRESS": re.compile(
         r"\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b"
+    ),
+
+    # NEW Day 3 ----------------------------------------------------------
+
+    # Simple US street address: number + street name + common suffix
+    # e.g. "742 Evergreen Terrace", "1600 Pennsylvania Ave"
+    "ADDRESS": re.compile(
+        r"\b\d{1,5}\s+[A-Z][a-zA-Z]*(?:\s+[A-Z][a-zA-Z]*)*\s+"
+        r"(?:St|Street|Ave|Avenue|Rd|Road|Blvd|Boulevard|Ln|Lane|Dr|Drive|"
+        r"Ct|Court|Way|Terrace|Ter|Pl|Place|Cir|Circle|Pkwy|Parkway)\b"
+    ),
+
+    # Age: "65 years old", "65-year-old", "age 65" — context word required
+    # so we don't grab every stray number in the text.
+    "AGE": re.compile(
+        r"\b(?:\d{1,3}\s*-?\s*years?\s*-?\s*old|age\s*[:#-]?\s*\d{1,3})\b",
+        re.IGNORECASE
     ),
 }
 
 
 def _resolve_overlaps(detections: List[Detection]) -> List[Detection]:
-    """
-    If two detections overlap in span (e.g. MRN pattern swallows part of
-    a date, or SSN pattern overlaps a phone number), keep the longer match
-    and drop the shorter one. Prevents duplicate/conflicting redactions.
-    """
     if not detections:
         return detections
 
@@ -98,16 +104,10 @@ def _resolve_overlaps(detections: List[Detection]) -> List[Detection]:
 
 
 def detect(text: str) -> List[Detection]:
-    """
-    Run all regex patterns against the input text, resolve overlaps,
-    and return a sorted list of Detection objects.
-    """
     results: List[Detection] = []
 
     for entity_type, pattern in PATTERNS.items():
         for match in pattern.finditer(text):
-            # ZIP pattern has a capture group for the actual digits;
-            # use the group span if present, else the whole match.
             if entity_type == "ZIP" and match.lastindex:
                 start, end = match.start(1), match.end(1)
                 matched_text = match.group(1)
@@ -137,11 +137,11 @@ def redact(text: str) -> str:
 
 if __name__ == "__main__":
     sample = (
-        "Patient John Doe, MRN: 1029384756, SSN 123-45-6789, "
-        "contacted on 04/12/2025 via email john.doe@example.com or "
-        "phone (555) 123-4567. Address zip code 60614. "
-        "Accessed from IP 192.168.1.10. "
-        "Follow-up scheduled for January 5, 2026."
+        "Patient John Doe, 65 years old, MRN: 1029384756, SSN 123-45-6789, "
+        "residing at 742 Evergreen Terrace, contacted on 04/12/2025 via "
+        "email john.doe@example.com or phone (555) 123-4567. "
+        "Blood pressure 120/80, zip code 60614. "
+        "Accessed from IP 192.168.1.10."
     )
 
     print("Original:")
