@@ -1,6 +1,6 @@
 """
 regex_detector.py
-Member 2 - Detection Engine Lead
+Yash Kulkarni - Detection Engine Lead
 Week 1 / Day 3: Edge-case hardening + 2 more entity types.
 
 Entities so far:
