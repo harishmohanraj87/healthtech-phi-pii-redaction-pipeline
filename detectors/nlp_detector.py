@@ -39,8 +39,7 @@ from dataclasses import dataclass
 from typing import List, Set
 
 try:
-    from presidio_analyzer import AnalyzerEngine, PatternRecognizer, Pattern, EntityRecognizer, RecognizerResult
-    from presidio_analyzer.nlp_engine import NlpEngineProvider
+    from presidio_analyzer import AnalyzerEngine, PatternRecognizer, Pattern  # type: ignore
     PRESIDIO_AVAILABLE = True
 except ImportError:
     PRESIDIO_AVAILABLE = False
@@ -152,7 +151,7 @@ def _build_medical_denylist_recognizer():
     )
 
 
-
+class NlpDetector:
     """
     Wraps Presidio's AnalyzerEngine and filters out medical-term
     false positives from PERSON detections.
