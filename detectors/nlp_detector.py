@@ -62,27 +62,12 @@ class NlpDetection:
 # Medical term allowlist — terms that must NEVER be redacted as PERSON,
 # even though they look like proper nouns (e.g. "Parkinson", "Alzheimer").
 #
-# This list will grow during Week 3 (accuracy tuning). Starting with the
-# most common ones so the pipeline doesn't break on Day 4.
+# Day 8: expanded from ~10 entries to a full reference covering 30+
+# eponymous conditions and general syndrome names, now maintained in
+# its own module (medical_terms.py) for easier upkeep.
 # ---------------------------------------------------------------------------
 
-MEDICAL_TERM_ALLOWLIST: Set[str] = {
-    "parkinson", "parkinson's", "parkinsons",
-    "alzheimer", "alzheimer's", "alzheimers",
-    "crohn", "crohn's", "crohns",
-    "hodgkin", "hodgkin's", "hodgkins",
-    "down syndrome", "down's syndrome",
-    "graves", "graves'",
-    "addison", "addison's",
-    "huntington", "huntington's",
-    "tourette", "tourette's",
-    "asperger", "asperger's",
-}
-
-# Disease/condition keywords that, if found near a flagged PERSON entity,
-# suggest it's a medical term rather than a patient name (e.g. "disease",
-# "syndrome", "disorder" following the name).
-MEDICAL_CONTEXT_WORDS = {"disease", "syndrome", "disorder", "diagnosis"}
+from detectors.medical_terms import MEDICAL_TERM_ALLOWLIST, MEDICAL_CONTEXT_WORDS
 
 
 def _is_medical_term(text: str, full_text: str, start: int, end: int) -> bool:
