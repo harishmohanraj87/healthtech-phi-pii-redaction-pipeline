@@ -146,6 +146,24 @@ DATASET: List[LabeledCase] = [
         expected=[],
         must_not_flag=[],
     ),
+    LabeledCase(
+        "turner_syndrome_trap",
+        "Patient has a history of Turner syndrome since childhood.",
+        expected=[],
+        must_not_flag=["Turner syndrome"],
+    ),
+    LabeledCase(
+        "marfan_trap",
+        "Cardiology consult ordered given known Marfan syndrome.",
+        expected=[],
+        must_not_flag=["Marfan syndrome"],
+    ),
+    LabeledCase(
+        "guillain_barre_trap",
+        "Recovering well after an episode of Guillain-Barre syndrome.",
+        expected=[],
+        must_not_flag=["Guillain-Barre syndrome"],
+    ),
 ]
 
 
