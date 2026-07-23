@@ -6,8 +6,12 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from logger.audit_logger import log_token_creation, log_token_retrieval
 
-# Connect to persistent Redis database
-redis_client = redis.Redis(host='localhost', port=6379, decode_responses=True)
+# NEW: Fetch connection details from the environment, but fallback to localhost if none exist
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
+
+# Connect using the dynamic environment variables
+redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
 
 def save_placeholder_mapping(token_placeholder: str, real_data: str, ttl_seconds: int = 3600):
     """
@@ -41,13 +45,6 @@ if __name__ == "__main__":
     sample_token = "TOKEN_XYZ_99999"
     sample_sensitive_data = "Jane Smith / 123-456-7890"
     
-    # Test Saving
     save_placeholder_mapping(sample_token, sample_sensitive_data)
-    
-    # Test Retrieving
     retrieved = get_real_data(sample_token)
     print(f"Retrieved: {retrieved}")
-    
-    # Test Fake Token (Error Handling)
-    print("\nTesting invalid token retrieval...")
-    get_real_data("FAKE_TOKEN_000")
