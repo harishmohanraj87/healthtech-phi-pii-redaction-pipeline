@@ -14,3 +14,10 @@ To safely store and manage "Forward Mapping" (Original Data -> Token) and "Rever
 * Implement Placeholder Mapping (saving data).
 * Implement the Re-identification engine (reverse mapping).
 * Handle session persistence and optimize Redis performance.
+
+## 🚀 Redis Optimization & Metrics
+**Sprint Goal:** Feature complete.
+
+*   **Redis Optimization:** Fine-tuning the persistent connection and memory usage for production-level traffic.
+*   **Latency Optimization:** Measuring and minimizing read/write times to prevent bottlenecks when Member 1's NLP pipeline sends data.
+*   **Code Cleanup:** Final refactoring of `mapping.py` to remove hardcoded testing strings and finalize the environment variable configuration.

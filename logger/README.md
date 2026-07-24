@@ -13,3 +13,10 @@ In healthcare and privacy applications, it is critical to know *who* accessed *w
 * Record all reverse-mapping (re-identification) requests.
 * Ensure logs do not accidentally contain raw PHI/PII (log the actions and tokens, never the sensitive data itself).
 * Monitor metrics and performance latency for the audit trail.
+
+## 🚀 Metrics & Cleanup
+**Sprint Goal:** Feature complete.
+
+*   **Performance Metrics:** Upgrading the logger to track execution time and latency for data storage and retrieval.
+*   **Log Management:** Ensuring audit logs are formatted cleanly for production monitoring and error tracking.
+*   **Code Cleanup:** Removing testing artifacts to ensure the logging module is feature-complete and ready for final deployment.
