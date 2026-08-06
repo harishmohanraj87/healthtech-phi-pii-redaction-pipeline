@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  # The persistent database for the Privacy Data Layer
+  redis-db:
+    image: redis:alpine
+    container_name: healthtech-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  # Ensures data survives even if the container is deleted
+  redis_data:
