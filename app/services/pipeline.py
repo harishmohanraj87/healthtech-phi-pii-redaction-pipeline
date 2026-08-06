@@ -1,4 +1,5 @@
 import re
+import time
 
 from detectors.combined_detector import CombinedDetector
 from vault.token_vault import TokenVault
@@ -7,11 +8,12 @@ from logger.audit_logger import log_token_creation
 
 class RedactionPipeline:
     """
-    End-to-end PHI/PII redaction pipeline.
+    End-to-end PHI/PII Redaction Pipeline.
 
-    Workflow:
+    Workflow
+    --------
     1. Detect PHI/PII entities.
-    2. Store/retrieve secure tokens from the Redis Token Vault.
+    2. Store or retrieve secure tokens from Redis.
     3. Replace original values with secure tokens.
     4. Restore original values when required.
     """
@@ -20,23 +22,56 @@ class RedactionPipeline:
         self.detector = CombinedDetector()
         self.vault = TokenVault()
 
-    def process(self, text: str):
+    def process(self, text: str, return_metrics: bool = False):
         """
         Detect PHI/PII and replace each entity with a secure token.
+
+        Parameters
+        ----------
+        text : str
+            Clinical text to redact.
+
+        return_metrics : bool
+            If True, performance metrics are included in the response.
         """
 
+        overall_start = time.perf_counter()
+
+        # -----------------------------
+        # Detection Stage
+        # -----------------------------
+        detection_start = time.perf_counter()
+
         detections = self.detector.detect(text)
+
+        detection_time = (
+            time.perf_counter() - detection_start
+        ) * 1000
+
         redacted_text = text
 
-        # Replace from end to beginning so indexes remain valid
+        # -----------------------------
+        # Token Vault Stage
+        # -----------------------------
+        vault_time = 0.0
+
         for d in sorted(detections, key=lambda x: x.start, reverse=True):
+
+            vault_start = time.perf_counter()
 
             token = self.vault.get_or_create_token(
                 d.entity_type,
                 d.text
             )
 
-            log_token_creation(d.entity_type, token)
+            vault_time += (
+                time.perf_counter() - vault_start
+            ) * 1000
+
+            log_token_creation(
+                d.entity_type,
+                token
+            )
 
             redacted_text = (
                 redacted_text[:d.start]
@@ -44,7 +79,11 @@ class RedactionPipeline:
                 + redacted_text[d.end:]
             )
 
-        return {
+        total_time = (
+            time.perf_counter() - overall_start
+        ) * 1000
+
+        result = {
             "redacted_text": redacted_text,
             "detections": [
                 {
@@ -58,10 +97,20 @@ class RedactionPipeline:
             ],
         }
 
+        if return_metrics:
+            result["metrics"] = {
+                "detection_ms": round(detection_time, 2),
+                "vault_ms": round(vault_time, 2),
+                "total_ms": round(total_time, 2),
+                "entities_detected": len(detections),
+            }
+
+        return result
+
     def restore(self, text: str):
         """
-        Restore secure tokens back to their original PHI values
-        using the Redis Token Vault.
+        Restore secure tokens back to their
+        original PHI values using Redis.
         """
 
         pattern = r"\[[A-Z]+_[A-Za-z0-9]+\]"
@@ -71,12 +120,13 @@ class RedactionPipeline:
         tokens = re.findall(pattern, text)
 
         for token in tokens:
+
             original_value = self.vault.restore_token(token)
 
             if original_value:
                 restored_text = restored_text.replace(
                     token,
-                    original_value
+                    original_value,
                 )
 
         return restored_text
