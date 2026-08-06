@@ -72,11 +72,13 @@ PATTERNS = {
     ),
 
     # Street address: number + street name + common suffix
-    "ADDRESS": re.compile(
-        r"\b\d{1,5}\s+[A-Za-z0-9.\s]+?\s(?:St|Street|Ave|Avenue|Blvd|Boulevard|"
-        r"Rd|Road|Dr|Drive|Ln|Lane|Ct|Court|Terrace|Ter|Way|Pl|Place)\b\.?",
-        re.IGNORECASE
-    ),
+"ADDRESS": re.compile(
+    r"\b\d{1,5}\s+[A-Za-z0-9.\s]+?\s"
+    r"(?:St|Street|Ave|Avenue|Blvd|Boulevard|"
+    r"Rd|Road|Dr|Drive|Ln|Lane|Ct|Court|"
+    r"Terrace|Ter|Way|Pl|Place)\b(?=[,.;!?]|\s|$)",
+    re.IGNORECASE,
+),
 
     # Age: "65 years old", "65 y/o", "65-year-old", "Age: 42"
     "AGE": re.compile(

@@ -19,6 +19,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 from detectors.combined_detector import CombinedDetector
+from detectors.nlp_detector import PRESIDIO_AVAILABLE
 
 
 def test_regex_layer_still_works_without_presidio():
@@ -30,13 +31,39 @@ def test_regex_layer_still_works_without_presidio():
     assert "DATE" in types
 
 
-def test_all_detections_come_from_regex_when_presidio_unavailable():
+from detectors.combined_detector import CombinedDetector
+from detectors.nlp_detector import PRESIDIO_AVAILABLE
+
+
+def test_detection_sources():
+    """
+    If Presidio is unavailable, every detection should come from regex.
+    If Presidio is available, regex detections must still exist and
+    NLP detections are allowed.
+    """
+
     detector = CombinedDetector()
-    text = "Email john.doe@example.com or call (555) 123-4567."
+
+    text = (
+        "Patient John Doe emailed john.doe@example.com "
+        "and called (555) 123-4567."
+    )
+
     detections = detector.detect(text)
+
     assert len(detections) > 0
-    for d in detections:
-        assert d.source == "regex"
+
+    if PRESIDIO_AVAILABLE:
+        sources = {d.source for d in detections}
+
+        # Regex must always contribute detections.
+        assert "regex" in sources
+
+        # NLP may also contribute detections.
+        assert sources.issubset({"regex", "nlp"})
+    else:
+        for d in detections:
+            assert d.source == "regex"
 
 
 def test_parkinson_disease_not_redacted():
