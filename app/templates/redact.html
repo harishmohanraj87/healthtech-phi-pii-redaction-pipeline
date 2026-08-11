@@ -1,0 +1,267 @@
+
+
+<div class="container-fluid">
+
+    <div class="row">
+
+        <div class="col-12">
+
+            <div class="card card-primary">
+
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-shield-alt"></i>
+                        PHI/PII Redaction
+                    </h3>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="form-group">
+
+                        <label for="clinicalText">
+                            Clinical Text
+                        </label>
+
+                        <textarea
+                            id="clinicalText"
+                            class="form-control"
+                            rows="10"
+                            placeholder="Enter clinical text containing PHI/PII..."
+                        ></textarea>
+
+                    </div>
+
+                    <button
+                        id="redactButton"
+                        class="btn btn-primary"
+                        onclick="redactText()"
+                    >
+                        <i class="fas fa-lock"></i>
+                        Redact PHI/PII
+                    </button>
+
+                    <button
+                        class="btn btn-secondary ml-2"
+                        onclick="clearForm()"
+                    >
+                        Clear
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Result -->
+
+    <div id="resultSection" class="row d-none">
+
+        <div class="col-md-7">
+
+            <div class="card card-success">
+
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Redacted Output
+                    </h3>
+                </div>
+
+                <div class="card-body">
+
+                    <pre
+                        id="redactedOutput"
+                        class="p-3"
+                        style="white-space: pre-wrap;"
+                    ></pre>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Detection summary -->
+
+        <div class="col-md-5">
+
+            <div class="card card-info">
+
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Detected Entities
+                    </h3>
+                </div>
+
+                <div class="card-body">
+
+                    <div id="detectionCount"
+                         class="alert alert-info">
+                    </div>
+
+                    <div class="table-responsive">
+
+                        <table class="table table-bordered">
+
+                            <thead>
+                                <tr>
+                                    <th>Entity</th>
+                                    <th>Source</th>
+                                    <th>Token</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="detectionTable">
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+async function redactText() {
+
+    const text = document.getElementById("clinicalText").value;
+
+    if (!text.trim()) {
+
+        alert("Please enter clinical text.");
+
+        return;
+    }
+
+    const button = document.getElementById("redactButton");
+
+    button.disabled = true;
+
+    button.innerHTML =
+        '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+
+    try {
+
+        const response = await fetch("/redact", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                text: text
+            })
+
+        });
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Redaction request failed: " + response.status
+            );
+
+        }
+
+
+        const data = await response.json();
+
+
+        document.getElementById("resultSection")
+            .classList.remove("d-none");
+
+
+        document.getElementById("redactedOutput")
+            .textContent = data.redacted_text;
+
+
+        document.getElementById("detectionCount")
+            .textContent =
+            data.detections.length +
+            " PHI/PII entities detected";
+
+
+        const table =
+            document.getElementById("detectionTable");
+
+        table.innerHTML = "";
+
+
+        data.detections.forEach(function (detection) {
+
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>
+                    <span class="badge badge-danger">
+                        ${detection.entity_type}
+                    </span>
+                </td>
+
+                <td>
+                    ${detection.source}
+                </td>
+
+                <td>
+                    ${detection.entity_type}
+                </td>
+            `;
+
+            table.appendChild(row);
+
+        });
+
+    }
+
+    catch (error) {
+
+        alert(error.message);
+
+    }
+
+    finally {
+
+        button.disabled = false;
+
+        button.innerHTML =
+            '<i class="fas fa-lock"></i> Redact PHI/PII';
+
+    }
+
+}
+
+
+function clearForm() {
+
+    document.getElementById("clinicalText").value = "";
+
+    document.getElementById("resultSection")
+        .classList.add("d-none");
+
+    document.getElementById("redactedOutput")
+        .textContent = "";
+
+    document.getElementById("detectionTable")
+        .innerHTML = "";
+
+}
+
+</script>
+
