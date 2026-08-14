@@ -50,12 +50,21 @@ class RedactionPipeline:
 
         redacted_text = text
 
+        # Store generated token information
+        detection_results = []
+
         # -----------------------------
         # Token Vault Stage
         # -----------------------------
         vault_time = 0.0
 
-        for d in sorted(detections, key=lambda x: x.start, reverse=True):
+        # Replace from end to beginning
+        # so character indexes remain valid.
+        for d in sorted(
+            detections,
+            key=lambda x: x.start,
+            reverse=True
+        ):
 
             vault_start = time.perf_counter()
 
@@ -73,36 +82,63 @@ class RedactionPipeline:
                 token
             )
 
-            redacted_text = (
-                redacted_text[:d.start]
-                + token
-                + redacted_text[d.end:]
-            )
-
-        total_time = (
-            time.perf_counter() - overall_start
-        ) * 1000
-
-        result = {
-            "redacted_text": redacted_text,
-            "detections": [
+            # Store detection information
+            # including the generated token.
+            detection_results.append(
                 {
                     "entity_type": d.entity_type,
                     "text": d.text,
                     "start": d.start,
                     "end": d.end,
                     "source": d.source,
+                    "token": token,
                 }
-                for d in detections
-            ],
+            )
+
+            # Replace original PHI/PII with token
+            redacted_text = (
+                redacted_text[:d.start]
+                + token
+                + redacted_text[d.end:]
+            )
+
+        # -----------------------------
+        # Performance Metrics
+        # -----------------------------
+        total_time = (
+            time.perf_counter() - overall_start
+        ) * 1000
+
+        # Restore original document order
+        detection_results.sort(
+            key=lambda x: x["start"]
+        )
+
+        # -----------------------------
+        # API Response
+        # -----------------------------
+        result = {
+            "redacted_text": redacted_text,
+            "detections": detection_results,
         }
 
         if return_metrics:
             result["metrics"] = {
-                "detection_ms": round(detection_time, 2),
-                "vault_ms": round(vault_time, 2),
-                "total_ms": round(total_time, 2),
-                "entities_detected": len(detections),
+                "detection_ms": round(
+                    detection_time,
+                    2
+                ),
+                "vault_ms": round(
+                    vault_time,
+                    2
+                ),
+                "total_ms": round(
+                    total_time,
+                    2
+                ),
+                "entities_detected": len(
+                    detections
+                ),
             }
 
         return result
@@ -117,16 +153,23 @@ class RedactionPipeline:
 
         restored_text = text
 
-        tokens = re.findall(pattern, text)
+        tokens = re.findall(
+            pattern,
+            text
+        )
 
         for token in tokens:
 
-            original_value = self.vault.restore_token(token)
+            original_value = (
+                self.vault.restore_token(token)
+            )
 
             if original_value:
-                restored_text = restored_text.replace(
-                    token,
-                    original_value,
+                restored_text = (
+                    restored_text.replace(
+                        token,
+                        original_value
+                    )
                 )
 
         return restored_text
