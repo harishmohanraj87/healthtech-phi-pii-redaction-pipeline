@@ -1,0 +1,823 @@
+/* =========================================================
+   HEALTH TECH PHI GUARD
+   Custom AdminLTE UI
+   MVP Dashboard + Redaction + Restore
+========================================================= */
+
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    background: #f4f6f9;
+    color: #212529;
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+}
+
+
+/* Smooth UI */
+
+* {
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   NAVBAR
+========================================================= */
+
+.main-header {
+    border-bottom: 1px solid #e9ecef;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.navbar-brand {
+    font-size: 17px;
+    font-weight: 600;
+    color: #343a40 !important;
+}
+
+.system-status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    color: #495057;
+}
+
+.status-dot {
+    width: 9px;
+    height: 9px;
+    display: inline-block;
+    border-radius: 50%;
+    background: #28a745;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.12);
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.brand-link {
+    display: flex;
+    align-items: center;
+    min-height: 57px;
+}
+
+.brand-icon {
+    width: 34px;
+    height: 34px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-right: 9px;
+
+    border-radius: 8px;
+
+    background: rgba(255, 255, 255, 0.12);
+
+    font-size: 16px;
+}
+
+.brand-text {
+    font-size: 16px;
+    letter-spacing: 0.2px;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.main-sidebar {
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
+}
+
+.user-panel {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.sidebar-avatar {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.10);
+
+    color: #ffffff;
+}
+
+.nav-sidebar .nav-link {
+    margin-bottom: 3px;
+    border-radius: 6px;
+    transition:
+        background 0.15s ease,
+        transform 0.15s ease;
+}
+
+.nav-sidebar .nav-link:hover {
+    transform: translateX(2px);
+}
+
+.nav-sidebar .nav-link.active {
+    box-shadow: none;
+}
+
+.nav-header {
+    margin-top: 15px;
+    color: rgba(255, 255, 255, 0.45) !important;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   CONTENT HEADER
+========================================================= */
+
+.content-header {
+    padding-bottom: 8px;
+}
+
+.page-title {
+    margin-bottom: 3px;
+
+    font-size: 27px;
+    font-weight: 600;
+
+    color: #212529;
+}
+
+.page-subtitle {
+    margin-top: 4px;
+    margin-bottom: 0;
+
+    color: #6c757d;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   STAT CARDS
+========================================================= */
+
+.stat-card {
+    border: 0;
+
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.045);
+
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 7px 18px rgba(0, 0, 0, 0.08);
+}
+
+.stat-card .card-body {
+    padding: 18px;
+}
+
+.stat-card h4 {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.stat-card p {
+    font-size: 12px;
+}
+
+.stat-icon {
+    width: 46px;
+    height: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   WORKSPACE CARDS
+========================================================= */
+
+.workspace-card {
+    border: 0;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.045);
+}
+
+.workspace-card .card-header {
+    padding: 14px 18px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #edf0f2;
+
+    border-radius: 12px 12px 0 0;
+}
+
+.workspace-card .card-title {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.workspace-card .card-body {
+    padding: 18px;
+}
+
+
+/* =========================================================
+   PIPELINE
+========================================================= */
+
+.pipeline-step {
+    min-width: 90px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 6px;
+
+    text-align: center;
+}
+
+.pipeline-step strong {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.pipeline-step small {
+    color: #6c757d;
+    font-size: 11px;
+}
+
+.pipeline-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    color: #ffffff;
+
+    font-size: 18px;
+
+    box-shadow:
+        0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.pipeline-arrow {
+    display: flex;
+    align-items: center;
+
+    color: #adb5bd;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   REDACTION WORKSPACE
+========================================================= */
+
+textarea.clinical-input {
+    width: 100%;
+
+    min-height: 300px;
+
+    resize: vertical;
+
+    padding: 14px;
+
+    border: 1px solid #dee2e6;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 14px;
+
+    line-height: 1.65;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+textarea.clinical-input:focus {
+    outline: none;
+
+    border-color: #80bdff;
+
+    box-shadow:
+        0 0 0 0.15rem rgba(0, 123, 255, 0.10);
+}
+
+
+/* =========================================================
+   OUTPUT BOX
+========================================================= */
+
+.output-box {
+    min-height: 300px;
+
+    padding: 14px 16px;
+
+    background: #f8f9fa;
+
+    border: 1px solid #dee2e6;
+
+    border-radius: 8px;
+
+    white-space: pre-wrap;
+
+    word-break: break-word;
+
+    font-family:
+        "Consolas",
+        "Courier New",
+        monospace;
+
+    font-size: 13px;
+
+    line-height: 1.65;
+
+    overflow-y: auto;
+}
+
+
+/* =========================================================
+   TOKEN
+========================================================= */
+
+.token {
+    display: inline-block;
+
+    padding: 2px 6px;
+
+    margin: 1px;
+
+    border-radius: 5px;
+
+    background: #e8f1ff;
+
+    color: #0056b3;
+
+    border: 1px solid #cfe2ff;
+
+    font-family:
+        "Consolas",
+        "Courier New",
+        monospace;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   DETECTION TABLE
+========================================================= */
+
+.detection-table {
+    width: 100%;
+
+    margin-bottom: 0;
+}
+
+.detection-table thead th {
+    padding: 11px 12px;
+
+    border-top: 0;
+
+    background: #f8f9fa;
+
+    color: #6c757d;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.6px;
+}
+
+.detection-table tbody td {
+    padding: 11px 12px;
+
+    vertical-align: middle;
+
+    border-top: 1px solid #f0f1f2;
+
+    font-size: 13px;
+}
+
+.detection-table tbody tr:hover {
+    background: #fafbfc;
+}
+
+.token-cell {
+    font-family:
+        "Consolas",
+        "Courier New",
+        monospace;
+
+    font-size: 12px;
+
+    color: #0056b3;
+}
+
+
+/* =========================================================
+   ENTITY BADGES
+========================================================= */
+
+.entity-badge {
+    display: inline-block;
+
+    padding: 4px 7px;
+
+    border-radius: 5px;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.3px;
+
+    background: #e9ecef;
+
+    color: #495057;
+}
+
+.source-badge {
+    display: inline-block;
+
+    padding: 4px 7px;
+
+    border-radius: 5px;
+
+    font-size: 10px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   STATUS BADGES
+========================================================= */
+
+.status-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 5px 8px;
+
+    border-radius: 6px;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+.status-badge::before {
+    content: "";
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: currentColor;
+}
+
+
+/* =========================================================
+   QUICK ACTION BUTTONS
+========================================================= */
+
+.btn-action {
+    min-height: 44px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 10px 18px;
+
+    border-radius: 7px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.btn-action:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================================================
+   COPY BUTTON
+========================================================= */
+
+.btn-copy {
+    padding: 4px 8px;
+
+    border: 1px solid #dee2e6;
+
+    border-radius: 5px;
+
+    background: #ffffff;
+
+    color: #6c757d;
+
+    font-size: 11px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+.btn-copy:hover {
+    background: #f1f3f5;
+
+    color: #212529;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-state {
+    padding: 45px 20px;
+
+    text-align: center;
+
+    color: #6c757d;
+}
+
+.empty-state i {
+    display: block;
+
+    margin-bottom: 14px;
+
+    font-size: 40px;
+
+    opacity: 0.35;
+}
+
+.empty-state h5 {
+    margin-bottom: 6px;
+
+    color: #495057;
+
+    font-size: 15px;
+}
+
+.empty-state p {
+    margin-bottom: 0;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   LOADING STATE
+========================================================= */
+
+.loading-state {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 200px;
+
+    color: #6c757d;
+}
+
+.loading-state i {
+    margin-right: 8px;
+}
+
+
+/* =========================================================
+   METRICS
+========================================================= */
+
+.metric {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 10px 0;
+
+    border-bottom: 1px solid #f0f1f2;
+}
+
+.metric:last-child {
+    border-bottom: none;
+}
+
+.metric-label {
+    color: #6c757d;
+
+    font-size: 12px;
+}
+
+.metric-value {
+    font-weight: 600;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   RESTORE / REDACTION RESULT
+========================================================= */
+
+.result-box {
+    min-height: 180px;
+
+    padding: 16px;
+
+    background: #f8f9fa;
+
+    border: 1px solid #dee2e6;
+
+    border-radius: 8px;
+
+    white-space: pre-wrap;
+
+    word-break: break-word;
+
+    font-family:
+        "Consolas",
+        "Courier New",
+        monospace;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   ALERTS
+========================================================= */
+
+.alert {
+    border-radius: 8px;
+
+    border-left-width: 4px;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.main-footer {
+    background: #ffffff;
+
+    border-top: 1px solid #e9ecef;
+
+    color: #6c757d;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 992px) {
+
+    .pipeline-arrow {
+        display: none;
+    }
+
+    .pipeline-step {
+        margin-bottom: 18px;
+    }
+
+}
+
+
+@media (max-width: 768px) {
+
+    .page-title {
+        font-size: 22px;
+    }
+
+    .page-subtitle {
+        font-size: 13px;
+    }
+
+    .stat-card {
+        margin-bottom: 12px;
+    }
+
+    textarea.clinical-input {
+        min-height: 220px;
+    }
+
+    .output-box {
+        min-height: 220px;
+    }
+
+    .workspace-card {
+        margin-bottom: 15px;
+    }
+
+}
+
+
+@media (max-width: 576px) {
+
+    .content-header {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .content {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .stat-card .card-body {
+        padding: 14px;
+    }
+
+    .pipeline-icon {
+        width: 42px;
+        height: 42px;
+    }
+
+}
