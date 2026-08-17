@@ -1,0 +1,541 @@
+{% extends "base.html" %}
+
+{% block title %}
+PHI Guard | Restore
+{% endblock %}
+
+{% block content %}
+
+<section class="content-header">
+
+    <div class="container-fluid">
+
+        <h1 class="page-title">
+            Token Restoration
+        </h1>
+
+        <p class="page-subtitle">
+            Restore protected tokens using the secure Redis token vault.
+        </p>
+
+    </div>
+
+</section>
+
+
+<section class="content">
+
+    <div class="container-fluid">
+
+
+        <div class="row">
+
+
+            <!-- Tokenized Input -->
+
+            <div class="col-lg-6">
+
+                <div class="card workspace-card">
+
+                    <div class="card-header">
+
+                        <h3 class="card-title">
+
+                            <i class="fas fa-lock mr-2"></i>
+
+                            Tokenized Clinical Text
+
+                        </h3>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <label for="tokenizedText">
+
+                            Protected text
+
+                        </label>
+
+
+                        <textarea
+                            id="tokenizedText"
+                            class="clinical-input form-control"
+                            placeholder="Paste tokenized text here...
+
+Example:
+
+Patient [PERSON_xxx] visited on [DATE_xxx].
+Email: [EMAIL_xxx]
+Phone: [PHONE_xxx]"
+                        ></textarea>
+
+
+                        <div class="mt-3">
+
+                            <button
+                                id="restoreButton"
+                                class="btn btn-warning btn-action"
+                                onclick="restoreText()"
+                            >
+
+                                <i class="fas fa-key"></i>
+
+                                Restore Text
+
+                            </button>
+
+
+                            <button
+                                class="btn btn-light btn-action ml-2"
+                                onclick="clearRestore()"
+                            >
+
+                                <i class="fas fa-eraser"></i>
+
+                                Clear
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Restored Output -->
+
+            <div class="col-lg-6">
+
+                <div class="card workspace-card">
+
+                    <div class="card-header">
+
+                        <h3 class="card-title">
+
+                            <i class="fas fa-file-medical mr-2"></i>
+
+                            Restored Output
+
+                        </h3>
+
+
+                        <div class="card-tools">
+
+                            <button
+                                class="btn btn-sm btn-light"
+                                onclick="copyRestored()"
+                            >
+
+                                <i class="fas fa-copy"></i>
+
+                                Copy
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <div
+                            id="restoredOutput"
+                            class="output-box"
+                        >
+
+                            <div class="empty-state">
+
+                                <i class="fas fa-key"></i>
+
+                                <h5>
+                                    No restoration performed
+                                </h5>
+
+                                <p>
+                                    Paste tokenized text and click
+                                    <strong>Restore Text</strong>.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Status -->
+
+        <div
+            id="restoreStatus"
+            class="alert alert-info d-none"
+        >
+
+            <i class="fas fa-spinner fa-spin mr-2"></i>
+
+            Restoring protected text...
+
+        </div>
+
+
+
+        <!-- Vault Information -->
+
+        <div class="row">
+
+
+            <div class="col-md-4">
+
+                <div class="card stat-card">
+
+                    <div class="card-body">
+
+                        <div class="d-flex justify-content-between">
+
+                            <div>
+
+                                <p class="text-muted mb-1">
+                                    Vault
+                                </p>
+
+                                <h4>
+                                    Redis
+                                </h4>
+
+                            </div>
+
+                            <div class="stat-icon bg-success text-white">
+
+                                <i class="fas fa-database"></i>
+
+                            </div>
+
+                        </div>
+
+                        <small class="text-success">
+
+                            <i class="fas fa-circle"></i>
+
+                            Token lookup available
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="card stat-card">
+
+                    <div class="card-body">
+
+                        <div class="d-flex justify-content-between">
+
+                            <div>
+
+                                <p class="text-muted mb-1">
+                                    Operation
+                                </p>
+
+                                <h4>
+                                    Restore
+                                </h4>
+
+                            </div>
+
+                            <div class="stat-icon bg-warning">
+
+                                <i class="fas fa-key"></i>
+
+                            </div>
+
+                        </div>
+
+                        <small class="text-muted">
+
+                            Secure token resolution
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="card stat-card">
+
+                    <div class="card-body">
+
+                        <div class="d-flex justify-content-between">
+
+                            <div>
+
+                                <p class="text-muted mb-1">
+                                    API
+                                </p>
+
+                                <h4>
+                                    POST /restore
+                                </h4>
+
+                            </div>
+
+                            <div class="stat-icon bg-primary text-white">
+
+                                <i class="fas fa-server"></i>
+
+                            </div>
+
+                        </div>
+
+                        <small class="text-muted">
+
+                            FastAPI endpoint
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Security Notice -->
+
+        <div class="card workspace-card">
+
+            <div class="card-body">
+
+                <div class="d-flex align-items-start">
+
+                    <div class="stat-icon bg-primary text-white mr-3">
+
+                        <i class="fas fa-shield-alt"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h5>
+                            Secure Restoration
+                        </h5>
+
+                        <p class="text-muted mb-0">
+
+                            Tokens are resolved through the secure
+                            token vault. The restoration operation
+                            does not require the original PHI/PII
+                            to be submitted again.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+
+{% block extra_js %}
+
+<script>
+
+async function restoreText() {
+
+    const text =
+        document
+            .getElementById("tokenizedText")
+            .value
+            .trim();
+
+
+    if (!text) {
+
+        showToast(
+            "Input required",
+            "Please enter tokenized text first.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+
+    const button =
+        document.getElementById("restoreButton");
+
+
+    const status =
+        document.getElementById("restoreStatus");
+
+
+    button.disabled = true;
+
+    status.classList.remove("d-none");
+
+
+    try {
+
+        const response =
+            await fetch("/restore", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    text: text
+                })
+
+            });
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Restore failed: HTTP " +
+                response.status
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        document
+            .getElementById("restoredOutput")
+            .textContent =
+            data.restored_text || "";
+
+
+        showToast(
+            "Restoration complete",
+            "Tokenized text restored successfully.",
+            "success"
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        showToast(
+            "Restore failed",
+            error.message,
+            "error"
+        );
+
+    }
+
+    finally {
+
+        button.disabled = false;
+
+        status.classList.add("d-none");
+
+    }
+
+}
+
+
+
+function copyRestored() {
+
+    const output =
+        document
+            .getElementById("restoredOutput")
+            .textContent;
+
+
+    if (!output.trim()) {
+
+        showToast(
+            "Nothing to copy",
+            "Run restoration first.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+
+    copyToClipboard(output);
+
+}
+
+
+
+function clearRestore() {
+
+    document
+        .getElementById("tokenizedText")
+        .value = "";
+
+
+    document
+        .getElementById("restoredOutput")
+        .innerHTML = `
+
+        <div class="empty-state">
+
+            <i class="fas fa-key"></i>
+
+            <h5>
+                No restoration performed
+            </h5>
+
+            <p>
+                Paste tokenized text and click
+                <strong>Restore Text</strong>.
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+</script>
+
+{% endblock %}
