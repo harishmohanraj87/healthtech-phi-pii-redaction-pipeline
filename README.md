@@ -14,15 +14,6 @@ The objective is to enable AI-assisted healthcare workflows while preserving pat
 
 ---
 
-## 🎯 Objectives
-
-* Detect Protected Health Information (PHI)
-* Detect Personally Identifiable Information (PII)
-* Redact sensitive information before LLM processing
-* Preserve clinical context for accurate AI responses
-* Provide audit logging for compliance and traceability
-* Build a modular and extensible redaction pipeline
-
 ## 👥 Team
 
 | Name                | Role                                 | Responsibilities                                                                                                                |
