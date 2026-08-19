@@ -1,225 +1,134 @@
 # 🏥 HealthTech – Automated PHI/PII Redaction Pipeline for LLMs
 
-> A secure AI-powered proxy service that detects and anonymizes Protected Health Information (PHI) and Personally Identifiable Information (PII) before clinical text is sent to Large Language Models (LLMs).
+> A secure FastAPI-based PHI/PII redaction pipeline that detects sensitive information in clinical text and replaces it with secure reversible tokens before the data can be forwarded to external AI/LLM systems.
 
 ---
 
 ## 📌 Project Overview
 
-Healthcare organizations are increasingly adopting AI-powered clinical assistants and generative AI models to automate documentation. However, sending raw patient conversations to external AI services can expose sensitive patient information and violate privacy regulations such as **HIPAA** and **PIPEDA**.
+Healthcare organizations are increasingly adopting AI-powered clinical assistants and generative AI systems to support documentation and clinical workflows.
 
-This project aims to build a secure **PHI/PII Redaction Pipeline** that intercepts clinical text, detects sensitive identifiers using Natural Language Processing (NLP), anonymizes them, and forwards only the sanitized content to an LLM.
+However, sending raw clinical text to external AI services can expose sensitive patient information.
 
-The objective is to enable AI-assisted healthcare workflows while preserving patient privacy and maintaining regulatory compliance.
+This project addresses that problem by providing a security layer between clinical applications and external AI systems.
+
+The pipeline detects PHI/PII using a combination of:
+
+- Rule-based Regex detection
+- NLP-based entity recognition
+- Microsoft Presidio
+- spaCy
+- Custom recognizers
+- Medical-condition allowlists
+- Cross-layer overlap resolution
+
+Detected sensitive values are replaced with secure tokens. The original values are stored in a Redis-based token vault so that authorized restoration can be performed when required.
 
 ---
 
-## 👥 Team
+# 👥 Team
 
-| Name                | Role                                 | Responsibilities                                                                                                                |
-| ------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| Name | Role | Responsibilities |
+|---|---|---|
 | **Harish Mohanraj** | Technical Lead & Backend Integration | Project architecture, FastAPI backend, API integration, repository management, testing, documentation, deployment, code reviews |
-| **Yash Kulkarni**   | NLP Detection Engineer               | Microsoft Presidio integration, spaCy-based PHI detection, custom recognizers, allowlist implementation, NLP testing            |
-| **Surya**           | Detection & Validation Engineer      | Regex-based PHI/PII detection, validation logic, test development, detector improvements, documentation support                 |
-
-## 🚀 Current Features
-
-* Regex-based PHI detection
-* NLP-based entity recognition
-* Microsoft Presidio integration
-* spaCy NLP support
-* Medical-condition allowlist
-* Custom MRN recognizer
-* PHI anonymization
-* Audit logging
-* Unit testing
-* Modular project structure
+| **Yash Kulkarni** | NLP Detection Engineer | Microsoft Presidio integration, spaCy-based PHI detection, custom recognizers, allowlist implementation, NLP testing |
+| **Surya** | Detection & Validation Engineer | Regex-based PHI/PII detection, validation logic, test development, detector improvements, documentation support |
 
 ---
 
-## 🛠️ Technology Stack
+# 🚀 Current MVP Features
 
-### Backend
+### Detection
 
-* Python
-* FastAPI
+- Regex-based PHI/PII detection
+- NLP-based entity recognition
+- Microsoft Presidio integration
+- spaCy support
+- Combined Regex + NLP detector
+- Cross-layer overlap resolution
+- Medical-condition allowlist
+- Custom MRN recognition
 
-### NLP
+### Privacy Protection
 
-* Microsoft Presidio
-* spaCy
-* Regular Expressions (Regex)
+- PHI/PII tokenization
+- Secure token generation
+- Redis token vault
+- Reversible token mapping
+- Token restoration
+- Audit logging
 
-### AI Integration
+### API
 
-* OpenAI API *(planned)*
-* Google Gemini *(planned)*
+- FastAPI backend
+- `POST /redact`
+- `POST /restore`
+- `GET /health`
+- Interactive Swagger API documentation
+
+### Frontend
+
+- AdminLTE-based security dashboard
+- PHI/PII Redaction interface
+- Token Restoration interface
+- Detection results table
+- Processing metrics
+- Token display
+- Copy/Clear actions
+- System and Redis status information
 
 ### Testing
 
-* Pytest
-
-### Deployment
-
-* Docker *(planned)*
+- Automated Pytest test suite
+- Detector tests
+- Regex tests
+- NLP tests
+- Combined detector tests
+- Token vault tests
+- Restoration tests
+- Performance/benchmark testing
 
 ---
 
-## 📂 Project Structure
+# 🏗️ Architecture
 
 ```text
-healthtech-phi-pii-redaction-pipeline/
-
-├── app/
-├── detectors/
-├── anonymizer/
-├── tests/
-├── docs/
-├── sample_data/
-├── README.md
-├── requirements.txt
-└── LICENSE
-```
-
----
-
-## 🔄 Project Workflow
-
-```text
-Clinical Transcript
-        │
-        ▼
-Regex Detection
-        │
-        ▼
-NLP Detection
-        │
-        ▼
-PHI / PII Recognition
-        │
-        ▼
-Anonymization
-        │
-        ▼
-Audit Logging
-        │
-        ▼
-Sanitized Text
-        │
-        ▼
-Large Language Model
-```
-
----
-
-## 🔒 PHI/PII Detection
-
-The pipeline is designed to detect identifiers including:
-
-* Patient Names
-* Dates
-* Phone Numbers
-* Email Addresses
-* Medical Record Numbers (MRN)
-* Addresses
-* Social Security Numbers
-* IP Addresses
-* URLs
-* Additional HIPAA Safe Harbor identifiers
-
----
-
-## 🧠 Smart Detection
-
-Unlike simple regex filters, the project combines NLP and rule-based detection to improve accuracy.
-
-Current improvements include:
-
-* Custom Presidio recognizers
-* Medical-condition allowlist to prevent diseases from being mistaken for patient names
-* Overlap handling between recognizers
-* Context-aware entity detection
-
----
-
-## ✅ Testing
-
-Current project status:
-
-* 39+ automated tests passing
-* Allowlist validation tests
-* Entity overlap tests
-* Regex validation tests
-* Detector validation tests
-
----
-
-## 📖 Documentation
-
-Additional documentation can be found in the `docs/` and `detectors/` directories.
-
-Topics include:
-
-* Entity detection
-* Recognizers
-* Project architecture
-* Usage
-* Known limitations
-
----
-
-## 🚧 Current Development Status
-
-### Completed
-
-* Project setup
-* Regex detector
-* NLP detector
-* Medical-condition allowlist
-* MRN recognizer
-* Unit testing
-* Documentation
-
-### In Progress
-
-* FastAPI proxy
-* LLM integration
-* Audit dashboard
-* API endpoints
-* Clinical note generation
-
-### Planned
-
-* Production deployment
-* Docker support
-* Authentication
-* Role-Based Access Control (RBAC)
-* OCR support
-* PDF document processing
-* FHIR/HL7 integration
-* Multi-language PHI detection
-
----
-
-## 🤝 Contributing
-
-This project is currently being developed as part of a collaborative HealthTech internship. Contributions and improvements are welcome through pull requests and issue discussions.
-
----
-
-## 📄 License
-
-This project is intended for educational and internship purposes. The appropriate open-source license will be added as development progresses.
-
----
-
-## ⭐ Future Roadmap
-
-* Complete FastAPI proxy service
-* Integrate external LLM APIs
-* Add healthcare compliance dashboard
-* Improve PHI detection accuracy
-* Support all HIPAA Safe Harbor identifiers
-* Add performance benchmarking
-* Containerize the application using Docker
-* Prepare for production deployment
+                    Clinical Text
+                         │
+                         ▼
+                  ┌─────────────┐
+                  │   FastAPI   │
+                  │    Proxy    │
+                  └──────┬──────┘
+                         │
+                         ▼
+                ┌─────────────────┐
+                │ Combined        │
+                │ Detector        │
+                └────────┬────────┘
+                         │
+                ┌────────┴────────┐
+                │                 │
+                ▼                 ▼
+        Regex Detector       NLP Detector
+                │                 │
+                └────────┬────────┘
+                         │
+                         ▼
+                 Overlap Resolution
+                         │
+                         ▼
+                  Token Vault
+                         │
+                         ▼
+                       Redis
+                         │
+                         ▼
+                 Secure Tokens
+                         │
+                         ▼
+                 Redacted Text
+                         │
+                         ▼
+               External LLM / AI
+                 (Future Phase)
